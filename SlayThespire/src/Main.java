@@ -8,11 +8,14 @@ public class Main {
 		Protagonist player = new Protagonist();
 		testMonster monster = new testMonster(); 
 		
-		player.getBag().displayCard();
+		player.getBag().displayCardList();
 		
-		System.out.println(monster.getHp());
+		System.out.println("Monster's Hp : " + monster.getHp());
 		playerTurn(player, monster);
-		System.out.println(monster.getHp());
+		System.out.println("Monster's Hp : " + monster.getHp());
+
+		System.out.print("In trashcan: ");
+		player.getTrashCan().displayTrashCan();
 	}
 	
 	//플레이어 턴 시작 - 몬스터가 여러마리인 경우 어떻게 하지 오버로딩 해야 되나 귀찮은데 -> 아니 왜 디폴트 매개변수 지원 안 하냐고;;
@@ -31,16 +34,25 @@ public class Main {
 		
 		//에너지3획득
 		player.setEnergy(3);
+		System.out.println("Energy : " + player.getEnergy());
 		
 		//턴 종료 버튼을 누른 경우 반복문 종료
 		while(true) {
 			System.out.println("Choose the Card");
+			System.out.print("On hand : ");
 			player.getHand().displayHand();
 			Scanner sc = new Scanner(System.in);
 			player.useCard(sc.nextInt(), monster1);
+			System.out.print("On hand : ");
 			player.getHand().displayHand();
+			
+			for(int i = player.getHand().getCount() - 1; i >= 0 ; i--) {
+				player.getTrashCan().setCard(player.getHand().goTrashCan(player.getHand().getCount() - 1));
+			}
 			break;
 		}
+		
+		System.out.println("Energy : " + player.getEnergy());
 	}
 	
 	public void playerTurn(Protagonist player, Enemy monster1, Enemy monster2) {

@@ -15,6 +15,7 @@ public class HandCard {
 		return list.remove(i);
 	}
 	
+	//손에 있는 카드 출력
 	public void displayHand() {
 		for(int i = 0; i < count; i++) {
 			System.out.print(list.get(i).getClass().getSimpleName() + " ");

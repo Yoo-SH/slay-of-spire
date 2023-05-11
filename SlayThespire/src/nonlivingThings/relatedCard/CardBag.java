@@ -45,9 +45,17 @@ public class CardBag {
 	}
 	
 	//가지고 있는 카드 출력
-	public void displayCard() {
+	public void displayCardList() {
 		for(int i = 0; i < listCount; i++) {
 			System.out.print(list.get(i).getClass().getSimpleName() + " ");
+		}
+		System.out.println();
+	}
+	
+	//가방에 있는 카드 출력
+	public void displayBag() {
+		for(int i = 0; i < listCount; i++) {
+			System.out.print(bag.get(i).getClass().getSimpleName() + " ");
 		}
 		System.out.println();
 	}
