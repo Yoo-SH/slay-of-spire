@@ -72,7 +72,7 @@ public class Route {
 					
 					int existence = (int) (Math.random()*countColRoom(i - 1));
 					
-					if(existence == 0) {		//2일 때 방 생성, 33%
+					if(existence == 0) {		//0일 때 방 생성, 16% ~ 33%, 이전 층에 방이 적으면 확률 높음
 						makeRoom(i, j);
 					}
 				}
