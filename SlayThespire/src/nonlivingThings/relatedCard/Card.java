@@ -1,31 +1,45 @@
 package nonlivingThings.relatedCard;
 
-import livingThings.fighter.Enemy;
+import livingThings.fighter.*;
 
 public class Card {
 	protected int cost;
 	protected int damage;
-	//addition 시리즈는 두 개이상이 적용되면 duration을 같게 해야됨
 	protected int additionDamage;
 	protected int additionShield;
-	protected int additionVampirism;
-	protected int additionPoison;
-	protected int duration;
-	protected boolean canUseEnemy;				//damage가 있는 경우에만 true
+	//additionWeak과 additionWeakening에 지속되는 시간을 저장 
+	protected int additionWeak;
+	protected int additionWeakening;
+//	protected int duration;		-> 필요 없음 additionDamage는 전투 중 계속 유지 됨
+	protected boolean canUseEnemy;		//damage가 있는 경우에만 true
 	
+	//ATTACK or SKILL
+	protected CardKind kind;
+
 	public Card(){
 		cost = 0;
 		damage = 0;
+		
 		additionDamage = 0;
 		additionShield = 0;
-		additionVampirism = 0;
-		additionPoison = 0;
-		duration = 0;
+		additionWeak = 0;
+		additionWeakening = 0;
+		
+//		duration = 0;
 		canUseEnemy = false;
 	}
 	
-	public void attack(Enemy monster) {
-		monster.setHp(monster.getHp() - damage);
+	public void attack(Enemy monster, Protagonist player) {
+		if(monster.getHp() - (damage + player.getBuffDamage()) <= 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬
+			monster.setHp(0);
+		}
+		else {
+			monster.setHp(monster.getHp() - (damage + player.getBuffDamage()));
+		}
+	}
+
+	public boolean isCanUseEnemy() {
+		return canUseEnemy;
 	}
 	
 	//getter, setter
@@ -39,49 +53,31 @@ public class Card {
 	public int getDamage() {
 		return damage;
 	}
-//	public void setDamage(int damage) {
-//		this.damage = damage;
-//	}
 
 	public int getAdditionDamage() {
 		return additionDamage;
 	}
-//	public void setAdditionDamage(int additionDamage) {
-//		this.additionDamage = additionDamage;
-//	}
 
 	public int getAdditionShield() {
 		return additionShield;
 	}
-//	public void setAdditionShield(int additionShield) {
-//		this.additionShield = additionShield;
-//	}
-
-	public int getAdditionVampirism() {
-		return additionVampirism;
-	}
-//	public void setAdditionVampirism(int additionVampirism) {
-//		this.additionVampirism = additionVampirism;
-//	}
-
-	public int getAdditionPoison() {
-		return additionPoison;
-	}
-//	public void setAddtionPoison(int addtionPoison) {
-//		this.addtionPoison = addtionPoison;
-//	}
 	
-	public int getDuration() {
-		return duration;
+	public int getAdditionWeak() {
+		return additionWeak;
 	}
-	public void setDuration(int duration) {
-		this.duration = duration;
+	
+	public int getAdditionWeakening() {
+		return additionWeakening;
 	}
-
-	public boolean isCanUseEnemy() {
-		return canUseEnemy;
+	
+	public CardKind getKind() {
+		return kind;
 	}
-//	public void setCanUseEnemy(boolean canUseEnemy) {
-//		this.canUseEnemy = canUseEnemy;
+	
+//	public int getDuration() {
+//		return duration;
+//	}
+//	public void setDuration(int duration) {
+//		this.duration = duration;
 //	}
 }

@@ -18,7 +18,7 @@ public class Route {
 		
 		//1층
 		for(int i = 0; i < COL; i++) {
-			if(countColRoom(0) == 6) {		//방이 6개라면 for문 탈출
+			if(countRowRoom(0) == 6) {		//방이 6개라면 for문 탈출
 				break;
 			}
 			
@@ -28,28 +28,28 @@ public class Route {
 				room[0][i] = RoomKind.ENEMY;
 			}
 			
-			if(i == 6 && countColRoom(0) < 3) {		//for문을 다 돌았는데 방의 개수가 3보다 작으면 i를 0으로 바꿈
+			if(i == 6 && countRowRoom(0) < 3) {		//for문을 다 돌았는데 방의 개수가 3보다 작으면 i를 0으로 바꿈
 				i = 0;
 			}
 		}
 		
-		roomCount[0] = countColRoom(0);
+		roomCount[0] = countRowRoom(0);
 		
 		//9층 -> 방이 3개만 존재(방 하나 당 링크를 3으로 해놔서 버그 예방용으로 이렇게 설정)
 		//아래 층에 방이 하나 밖에 없어서 makeRoom 못 씀
 		for(int i = 0; i < COL; i++) {
-			if(countColRoom(ELITE_COL + 1) == 3) {		//방이 3개라면 for문 탈출
+			if(countRowRoom(ELITE_COL + 1) == 3) {		//방이 3개라면 for문 탈출
 				break;
 			}
 			
 			int existence = (int) (Math.random()*4);
 			
 			if(existence == 3 && room[ELITE_COL + 1][i] == null)	{		//3일 때 방 생성
-				link[ELITE_COL][3][countColRoom(ELITE_COL + 1)] = Integer.toString(i);
+				link[ELITE_COL][3][countRowRoom(ELITE_COL + 1)] = Integer.toString(i);
 				room[ELITE_COL + 1][i] = RoomKind.ENEMY;
 			}
 			
-			if(i == 6 && countColRoom(ELITE_COL + 1) < 3) {		//for문을 다 돌았는데 방의 개수가 3보다 작으면 i를 0으로 바꿈
+			if(i == 6 && countRowRoom(ELITE_COL + 1) < 3) {		//for문을 다 돌았는데 방의 개수가 3보다 작으면 i를 0으로 바꿈
 				i = 0;
 			}
 		}
@@ -66,11 +66,11 @@ public class Route {
 			
 			for(int j = 0; j < COL; j++) {
 				if(room[i - 1][j] != null) {
-					if(countColRoom(i) == 6) {		//방이 6개라면 for문 탈출
+					if(countRowRoom(i) == 6) {		//방이 6개라면 for문 탈출
 						break;
 					}
 					
-					int existence = (int) (Math.random()*countColRoom(i - 1));
+					int existence = (int) (Math.random()*countRowRoom(i - 1));
 					
 					if(existence == 0) {		//0일 때 방 생성, 16% ~ 33%, 이전 층에 방이 적으면 확률 높음
 						makeRoom(i, j);
@@ -78,7 +78,7 @@ public class Route {
 				}
 			}
 			
-			roomCount[i] = countColRoom(i);
+			roomCount[i] = countRowRoom(i);
 			
 			if(roomCount[i] < 3) {
 				i--;
@@ -94,7 +94,7 @@ public class Route {
 		for(int i = 14; i >= 0; i--) {
 			for(int j = 0; j < 7; j++) {
 				if(room[i][j] == null) {
-					System.out.print(" X ");
+					System.out.print("   ");
 				}
 				else if(room[i][j] == RoomKind.ENEMY) {
 					System.out.print(" M ");
@@ -143,36 +143,46 @@ public class Route {
 	}
 	
 	//아래 층을 바탕으로 방을 만듬
-	private void makeRoom(int floor, int x) {
-		if(room[floor - 1][x] != null) {
-			int direction = (int) (Math.random()*3) - 1;		//방향은 -1, 0, 1 중 하나
-			
-			while(!isValidLocation(x + direction)) {
-				direction = (int) (Math.random()*3) - 1;
-			}
+	private void makeRoom(int row, int col) {
+		if(room[row - 1][col] != null) {
+			int direction = decideDirection(row - 1, col);		//direction은 -1, 0, 1 중 하나
 
-			link[floor - 1][x][direction + 1] = Integer.toString(x + direction);
+			link[row - 1][col][direction + 1] = Integer.toString(col + direction);		//0에는 왼쪽, 1에는 가운데, 2에는 오른쪽 저장
 			
-			int probability = (int) (Math.random()*50);
+			int probability = (int) (Math.random()*50);		//확률 / 0~29 몬스터, 30~38 상인, 39~44 보물, 45~49 휴식 
 			
 			if(probability < 30) {
-				room[floor][x + direction] = RoomKind.ENEMY;
+				room[row][col + direction] = RoomKind.ENEMY;
 			}
 			else if(probability < 39) {
-				room[floor][x + direction] = RoomKind.MERCHANT;
+				room[row][col + direction] = RoomKind.MERCHANT;
 			}
 			else if(probability < 45 ){
-				room[floor][x + direction] = RoomKind.TREASURE;
+				room[row][col + direction] = RoomKind.TREASURE;
 			}
 			else {
-				room[floor][x + direction] = RoomKind.REST;
+				room[row][col + direction] = RoomKind.REST;
 			}
 		}
 	}
 	
+	//방향 정하기
+	private int decideDirection(int row, int col) {
+		int direction = (int) (Math.random()*3) - 1;
+		while (!isValidLocation(col + direction)		//가리키는 곳이 -1이거나 7인 경우
+		   || (col > 0 && Integer.toString(col).equals(link[row][col - 1][2]) && direction == -1)	//왼쪽 링크가 자신을 가리키고, direction이 왼쪽을 가리키는 경우
+		   || (col < 6 && Integer.toString(col).equals(link[row][col + 1][0]) && direction == 1)		//오른쪽 링크가 자신을 가리키고, direction이 오른쪽을 가리키는 경우
+			  ) {
+			
+			direction = (int) (Math.random()*3) - 1;
+		}
+		
+		return direction;
+	}
+	
 	//방을 만드는 위치가 유효한 위치에 있는 지 확인
-	private boolean isValidLocation(int x) {
-		if(x < 0 || x > 6) {
+	private boolean isValidLocation(int col) {
+		if(col < 0 || col > 6) {
 			return false;
 		}
 		else {
@@ -180,17 +190,17 @@ public class Route {
 		}
 	}
 	
-	//중간보스 방, 보스 방으로 이어지는 링크 설정
-	private void linkSpecialRoom(int floor) {
+	//중간보스 방과 보스 방 이전의 방들의 링크는 3으로 고정
+	private void linkSpecialRoom(int row) {
 		for(int i = 0; i < COL; i++) {
-			if(room[floor - 1][i] != null) {
-				link[floor - 1][i][0] = "3";
+			if(room[row - 1][i] != null) {
+				link[row - 1][i][1] = "3";
 			}
 		}
 	}
 	
-	//층 별로 방의 개수 세기
-	private int countColRoom(int floor) {
+	//층에 몇 개의 방이 있는지 셈
+	private int countRowRoom(int floor) {
 		int count = 0;
 		
 		for(int i = 0; i < COL; i++) {

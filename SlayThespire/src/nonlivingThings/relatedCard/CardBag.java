@@ -4,44 +4,57 @@ import java.util.LinkedList;
 
 //플레이어가 가지고 있는 모든 카드
 public class CardBag {
-	private  LinkedList<Card> list = new LinkedList<Card>();		//플레이어는 카드를 30장까지 가질 수 있음
-	private  LinkedList<Card> bag = new LinkedList<Card>();		//list는 플레이어가 가지고 있는 카드, bag은 꺼냈다 넣었다 할 수 있는 카드
+	private  LinkedList<Card> list;
+	private  LinkedList<Card> bag;		//list는 플레이어가 가지고 있는 카드, bag은 전투 중 사용하는 카드
 	private  int listCount;
 	private  int bagCount;
 	
 	public CardBag() {
+		list = new LinkedList<Card>();
+		bag = new LinkedList<Card>();
 		listCount = 0;
 		bagCount = 0;
 	}
 	
-	//카드 추가
-	public void addCard(Card card) {
+	//새로운 카드 획득
+	public void gainCard(Card card) {
 		list.add(card);
 		bag.add(card);
 		listCount++;
 		bagCount++;
 	}
 	
-	//카드 삭제 - remove(index)는 index위치의 카드를 지움, remove(object)는 object를 지우는데 똑같은 카드가 있는 경우 제일 처음에 있는 카드를 지움
-	public void deleteCard(int i) {
+	//카드 제거 - remove(index)는 index위치의 카드를 지움, remove(object)는 object를 지움
+	public void eliminateCard(int i) {
 		list.remove(i);
 		bag.remove(i);
 		listCount--;
 		bagCount--;
 	}
 	
-	//손으로 보냄 - 턴 시작 시 5번 반복
-	public Card goHand() {
-		int i = (int) ((Math.random() * bagCount));
+	//임시 카드 삭제
+	public void eliminateTmpCard(Card card) {
+		bag.remove(card);
 		bagCount--;
-		return bag.remove(i);		//remove(index)는 제거한 객체를 리턴, remove(object)는 제거 성공하면 true를 리턴
 	}
 	
-	//쓰레기통으로부터 받기
-	public void receiveFromTrashCan() {
+	//bag에 카드 추가 - 전투 중
+	public void addCard(Card card) {
+		bag.add(card);
+		bagCount++;
+	}
+	
+	public void display() {
 		for(int i = 0; i < bagCount; i++) {
-			list.add(CardTrashCan.goBag());
+			System.out.print(bag.get(i).getClass().getSimpleName() + " ");
 		}
+		System.out.println();
+	}
+	
+	//bag에 카드 삭제 - 전투 중
+	public Card deleteCard(int pos) {
+		bagCount--;
+		return bag.remove(pos);
 	}
 	
 	//가지고 있는 카드 출력
@@ -54,7 +67,7 @@ public class CardBag {
 	
 	//가방에 있는 카드 출력
 	public void displayBag() {
-		for(int i = 0; i < listCount; i++) {
+		for(int i = 0; i < bagCount; i++) {
 			System.out.print(bag.get(i).getClass().getSimpleName() + " ");
 		}
 		System.out.println();
