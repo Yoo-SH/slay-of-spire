@@ -7,11 +7,12 @@ public class Card {
 	protected int damage;
 	protected int additionDamage;
 	protected int additionShield;
-	//additionWeak과 additionWeakening에 지속되는 시간을 저장 
+	
+	//additionWeak과 additionWeakening은 지속되는 시간을 저장 
 	protected int additionWeak;
 	protected int additionWeakening;
-//	protected int duration;		-> 필요 없음 additionDamage는 전투 중 계속 유지 됨
 	protected boolean canUseEnemy;		//damage가 있는 경우에만 true
+	protected boolean canUseAll;		//모든 적을 공격하는 지 확인
 	
 	//ATTACK or SKILL
 	protected CardKind kind;
@@ -25,10 +26,10 @@ public class Card {
 		additionWeak = 0;
 		additionWeakening = 0;
 		
-//		duration = 0;
 		canUseEnemy = false;
+		canUseAll = false;
 	}
-	
+
 	public void attack(Enemy monster, Protagonist player) {
 		if(monster.getHp() - (damage + player.getBuffDamage()) <= 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬
 			monster.setHp(0);
@@ -40,6 +41,10 @@ public class Card {
 
 	public boolean isCanUseEnemy() {
 		return canUseEnemy;
+	}
+	
+	public boolean isCanUseAll() {
+		return canUseAll;
 	}
 	
 	//getter, setter
@@ -73,11 +78,4 @@ public class Card {
 	public CardKind getKind() {
 		return kind;
 	}
-	
-//	public int getDuration() {
-//		return duration;
-//	}
-//	public void setDuration(int duration) {
-//		this.duration = duration;
-//	}
 }

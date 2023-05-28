@@ -8,6 +8,7 @@ import nonlivingThings.relatedCard.cardList.attackCard.normal.*;
 import nonlivingThings.relatedRelics.*;
 
 import java.util.LinkedList;
+import java.util.Scanner;
 
 //플레이어
 public class Protagonist extends Fighter {
@@ -63,17 +64,15 @@ public class Protagonist extends Fighter {
 		return hp <= 0 ? true : false;
 	}
 	
-	//카드 사용
-	public void useCard(int pos, Enemy target) {	//pos는 카드 인덱스 target도 인덱스로 해야 될 것 같은데 -> 주소로 넘겨주니까 상관 없음
-		if(hand.getCard(pos).isCanUseEnemy()) {		//적에게 사용가능한 경우
-			if(hand.getCard(pos).getCost() > energy) {
-				System.out.println("Energy shortage");
-				return;
-			}
-			else {
-				hand.getCard(pos).attack(target, this);
-				energy -= hand.getCard(pos).getCost();
-			}
+	//카드 사용 - 적에게 사용할 수 있는 경우
+	public void useCard(int pos, Enemy target) {
+		if(hand.getCard(pos).getCost() > energy) {
+			System.out.println("Energy shortage");
+			return;
+		}
+		else {
+			hand.getCard(pos).attack(target, this);
+			energy -= hand.getCard(pos).getCost();
 		}
 		
 		//카드에 버프 및 디버프들이 존재하는 경우
@@ -94,8 +93,72 @@ public class Protagonist extends Fighter {
 		trashCan.addCard(hand.deleteCard(pos));
 	}
 	
+	//카드 사용 - 적에게 사용할 수 없는 경우
+	
+	//카드 사용 - 적에게 사용할 수 없는 경우
+	public void useCard(int pos) {
+		if(hand.getCard(pos).getCost() > energy) {
+			System.out.println("Energy shortage");
+			return;
+		}
+		else {
+			energy -= hand.getCard(pos).getCost();
+		}
+		
+		//카드에 버프 및 디버프들이 존재하는 경우
+		if(hand.getCard(pos).getAdditionDamage() != 0) {
+			buffDamage.add(hand.getCard(pos).getAdditionDamage());
+			buffDamageCount++;
+		}
+		if(hand.getCard(pos).getAdditionShield() != 0) {
+			shield += hand.getCard(pos).getAdditionShield();
+		}
+		
+		trashCan.addCard(hand.deleteCard(pos));
+	}
 	
 	
+	//카드 선택
+	public int selectCard() {
+		System.out.println("Choose the Card");
+		System.out.print("On hand : ");
+		hand.displayHand();
+		
+		int index;
+		
+		Scanner sc = new Scanner(System.in);
+		index = sc.nextInt();
+		
+		//손에 들고 있는 카드 수보다 큰 인덱스를 고르는 경우
+		while(index >= hand.getCount()) {
+			System.out.println("Incorrect Index. Choose the one more time.");
+			
+			index = sc.nextInt();
+		}
+		
+		return index;
+	}
+	
+	//공격할 몬스터 선택
+	public int selectEnemy(Enemy[] monsterList) {
+		System.out.println("Choose the monster");
+		
+		int index;
+		
+		Scanner sc = new Scanner(System.in);
+		index = sc.nextInt();
+		
+		// 몬스터 수보다 큰 숫자를 고르거나 (ex. 몬스터 수는 2마리인데 3번 인덱스를 고른 경우) 선택한 인덱스의 몬스터가 죽어있는 경우
+		while(index > monsterList.length - 1
+			  || monsterList[index].isDie()) {
+			System.out.println("Incorrect Index. Choose the one more time.");
+			
+			index = sc.nextInt();
+		}
+		
+		return index;
+	}
+
 	//카드 획득
 	public void gainCard(Card card) {
 		cardBag.gainCard(card);
@@ -108,7 +171,7 @@ public class Protagonist extends Fighter {
 	
 	//임시 카드 제거
 	public void eliminateTmpCard() {
-		for(; tmpCardCount != 0; tmpCardCount--) {
+		for(; tmpCardCount > 0; tmpCardCount--) {
 			cardBag.eliminateTmpCard(tmpCardBag.get(tmpCardCount - 1));
 			tmpCardBag.remove(tmpCardCount - 1);
 		}

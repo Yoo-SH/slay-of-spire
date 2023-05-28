@@ -24,11 +24,6 @@ public class Clash  extends Card {
 			}
 		}
 		
-		if(monster.getHp() - (damage + player.getBuffDamage()) <= 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬
-			monster.setHp(0);
-		}
-		else {
-			monster.setHp(monster.getHp() - (damage + player.getBuffDamage()));
-		}
+		super.attack(monster, player);
 	}
 }
