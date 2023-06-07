@@ -5,6 +5,7 @@ import nonlivingThings.relatedCard.CardBag;
 import nonlivingThings.relatedCard.CardTrashCan;
 import nonlivingThings.relatedCard.HandCard;
 import nonlivingThings.relatedCard.cardList.attackCard.normal.*;
+import nonlivingThings.relatedCard.cardList.skillCard.normal.*;
 import nonlivingThings.relatedRelics.*;
 
 import java.util.LinkedList;
@@ -12,9 +13,7 @@ import java.util.Scanner;
 
 //플레이어
 public class Protagonist extends Fighter {
-	private LinkedList<Integer> buffDamage;		//데미지 증가
-	private LinkedList<Integer> buffDamageDuration;
-	private int	buffDamageCount;
+	private int buffDamage;		//데미지 증가
 	private LinkedList<Integer> deBuffDamage;	//데미지 감소
 	private LinkedList<Integer> deBuffDamageDuration;
 	private int	deBuffDamageCount;
@@ -35,9 +34,7 @@ public class Protagonist extends Fighter {
 	public Protagonist() {
 		hp = maxHp = 80;
 		
-		buffDamage = new LinkedList<Integer>();
-		buffDamageDuration = new LinkedList<Integer>();
-		buffDamageCount = 0;
+		buffDamage = 0;
 		
 		deBuffDamage = new LinkedList<Integer>();
 		deBuffDamageDuration = new LinkedList<Integer>();
@@ -54,11 +51,16 @@ public class Protagonist extends Fighter {
 		tmpCardBag = new LinkedList<Card>();
 		tmpCardCount = 0;
 		
-		for(int i = 0; i < 10; i++) {
+		//타격 5장, 수비 4장, 강타 1장
+		for(int i = 0; i < 5; i++) {
 			gainCard(new Strike());
 		}
+		for(int i = 0; i < 4; i++) {
+			gainCard(new Defend());
+		}
+		gainCard(new Bash());
 	}
-	
+
 	//죽었는 지 확인
 	public boolean isDie() {
 		return hp <= 0 ? true : false;
@@ -75,25 +77,21 @@ public class Protagonist extends Fighter {
 			energy -= hand.getCard(pos).getCost();
 		}
 		
-		//카드에 버프 및 디버프들이 존재하는 경우
+		//카드에 버프가 존재하는 경우
 		if(hand.getCard(pos).getAdditionDamage() != 0) {
-			buffDamage.add(hand.getCard(pos).getAdditionDamage());
-			buffDamageCount++;
+			buffDamage += hand.getCard(pos).getAdditionDamage();
 		}
 		if(hand.getCard(pos).getAdditionShield() != 0) {
 			shield += hand.getCard(pos).getAdditionShield();
 		}
-		if(hand.getCard(pos).getAdditionWeak() != 0) {
-			target.addWeak(hand.getCard(pos).getAdditionWeak());
-		}
-		if(hand.getCard(pos).getAdditionWeakening() != 0) {
-			target.addWeakening(hand.getCard(pos).getAdditionWeakening());
+		
+		//카드가 스킬을 가지고 있는 경우
+		if(hand.getCard(pos).isHasSkill()) {
+			hand.getCard(pos).skill(this);
 		}
 		
-		trashCan.addCard(hand.deleteCard(pos));
+		goTrashCan(pos);
 	}
-	
-	//카드 사용 - 적에게 사용할 수 없는 경우
 	
 	//카드 사용 - 적에게 사용할 수 없는 경우
 	public void useCard(int pos) {
@@ -107,16 +105,19 @@ public class Protagonist extends Fighter {
 		
 		//카드에 버프 및 디버프들이 존재하는 경우
 		if(hand.getCard(pos).getAdditionDamage() != 0) {
-			buffDamage.add(hand.getCard(pos).getAdditionDamage());
-			buffDamageCount++;
+			buffDamage += hand.getCard(pos).getAdditionDamage();
 		}
 		if(hand.getCard(pos).getAdditionShield() != 0) {
 			shield += hand.getCard(pos).getAdditionShield();
 		}
+
+		//카드가 스킬을 가지고 있는 경우
+		if(hand.getCard(pos).isHasSkill()) {
+			hand.getCard(pos).skill(this);
+		}
 		
 		trashCan.addCard(hand.deleteCard(pos));
 	}
-	
 	
 	//카드 선택
 	public int selectCard() {
@@ -137,6 +138,35 @@ public class Protagonist extends Fighter {
 		}
 		
 		return index;
+	}
+	
+	//공격당함
+	public void hit(Enemy monster) {
+		if(monster.getWeakeningDuration() == 0) {		//몬스터에게 약화가 없는 경우
+			if(shield == 0) {
+				hp -= monster.getAttackPower();
+			}
+			else if(shield > monster.getAttackPower()) {		//shield가 몬스터의 공격력보다 큰 경우
+				shield -= monster.getAttackPower();
+			}
+			else {		//shield가 몬스터의 공격력보다 작은 경우
+				hp -=  monster.getAttackPower() - shield;
+				shield = 0;
+			}
+		}
+		else {		//몬스터에게 약화가 있는 경우
+			if(shield == 0) {
+				hp -= monster.getAttackPower() * 3 / 4;
+			}
+			else if(shield > monster.getAttackPower() * 3 / 4) {		//shield가 몬스터의 공격력보다 큰 경우
+				shield -= monster.getAttackPower() * 3 / 4;
+			}
+			else {		//shield가 몬스터의 공격력보다 작은 경우
+				hp -=  monster.getAttackPower() * 3 / 4 - shield;
+				shield = 0;
+			}
+		}
+		
 	}
 	
 	//공격할 몬스터 선택
@@ -197,10 +227,7 @@ public class Protagonist extends Fighter {
 	
 	//버프 초기화 -> 전투 종료 시 호출
 	public void resetBuff() {
-		for(; buffDamageCount-- != 0; ) {
-			buffDamage.remove();
-			buffDamageDuration.remove();
-		}
+		buffDamage = 0;
 		for(; deBuffDamageCount-- != 0; ) {
 			deBuffDamage.remove();
 			deBuffDamageDuration.remove();
@@ -218,21 +245,6 @@ public class Protagonist extends Fighter {
 		this.deBuffDamage.remove(i);
 	}
 	
-	//전투 중 버프 시간 줄이기, 끝나면 해제
-	public void decreaseBuffDamage() {
-		for(int i = buffDamageCount - 1; i != -1; i--) {
-			//버프 지속시간을 1씩 줄임
-			buffDamageDuration.set(i, buffDamageDuration.get(i) - 1);
-			
-			//버프 지속시간이 0이 되면 버프 제거
-			if(buffDamageDuration.get(i) == 0) {
-				buffDamageDuration.remove(i);
-				buffDamage.remove(i);
-				buffDamageCount--;
-			}
-		}
-	}
-	
 	//전투 중 디버프 시간 줄이기, 끝나면 해제
 	public void decreaseDeBuffDamage() {
 		for(int i = deBuffDamageCount - 1; i != -1; i--) {
@@ -248,11 +260,12 @@ public class Protagonist extends Fighter {
 		}
 	}
 	
-	//분노(Anger)카드를 사용하면 Anger클래스의 attack메소드에서 호출
-	public void useAnger() {
-		tmpCardBag.add(new Anger());
-		tmpCardCount++;
-		trashCan.addCard(tmpCardBag.get(tmpCardCount - 1));
+	public void addEnergy(int energy) {
+		this.energy += energy;
+	}
+	
+	public void addBuffDamage(int buffDamage) {
+		this.buffDamage += buffDamage;
 	}
 	
 	//getter, setter
@@ -263,27 +276,14 @@ public class Protagonist extends Fighter {
 	public int getEnergy() {
 		return energy;
 	}
-	public void setEnergy(int energy) {
-		this.energy += energy;
-	}
 	
 	//------------------버프------------------
 	public int getBuffDamage() {
-		int sum = 0;
-		
-		for(int i = 0; i < buffDamageCount; i++) {
-			sum += buffDamage.get(i);
-		}
-		
-		return sum;
-	}
-	
-	public int getBuffDamageCount() {
-		return buffDamageCount;
+		return buffDamage;
 	}
 	
 	//------------------디버프------------------
-	public int getDeBuffDamage() {
+	public int getDebuffDamage() {
 		int sum = 0;
 		
 		for(int i = 0; i < deBuffDamageCount; i++) {
@@ -291,6 +291,9 @@ public class Protagonist extends Fighter {
 		}
 		
 		return sum;
+	}
+	public void setDeBuffDamage(int deBuffDamage) {
+		this.deBuffDamage.add(deBuffDamage);
 	}
 	
 	public void setDeBuffDamageDuration(int deBuffDamageDuration) {
@@ -315,5 +318,17 @@ public class Protagonist extends Fighter {
 
 	public HandCard getHand() {
 		return hand;
+	}
+	
+	public int getTmpCardCount() {
+		return tmpCardCount;
+	}
+
+	public void setTmpCardCount(int tmpCardCount) {
+		this.tmpCardCount = tmpCardCount;
+	}
+
+	public LinkedList<Card> getTmpCardBag() {
+		return tmpCardBag;
 	}
 }

@@ -9,10 +9,11 @@ public class Card {
 	protected int additionShield;
 	
 	//additionWeak과 additionWeakening은 지속되는 시간을 저장 
-	protected int additionWeak;
-	protected int additionWeakening;
+	protected int additionWeak;			//취약
+	protected int additionWeakening;	//약화
 	protected boolean canUseEnemy;		//damage가 있는 경우에만 true
 	protected boolean canUseAll;		//모든 적을 공격하는 지 확인
+	protected boolean hasSkill;			//특수 능력을 가지고 있는 지 확인
 	
 	//ATTACK or SKILL
 	protected CardKind kind;
@@ -28,17 +29,17 @@ public class Card {
 		
 		canUseEnemy = false;
 		canUseAll = false;
+		hasSkill = false;
 	}
 
 	public void attack(Enemy monster, Protagonist player) {
-		if(monster.getHp() - (damage + player.getBuffDamage()) <= 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬
-			monster.setHp(0);
-		}
-		else {
-			monster.setHp(monster.getHp() - (damage + player.getBuffDamage()));
-		}
+		monster.hit(player, this);
+		skill(player);
 	}
-
+	
+	//오버라이딩용
+	public void skill(Protagonist player) {}
+	
 	public boolean isCanUseEnemy() {
 		return canUseEnemy;
 	}
@@ -77,5 +78,9 @@ public class Card {
 	
 	public CardKind getKind() {
 		return kind;
+	}
+
+	public boolean isHasSkill() {
+		return hasSkill;
 	}
 }

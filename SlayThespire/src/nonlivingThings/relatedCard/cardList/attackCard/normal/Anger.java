@@ -1,6 +1,5 @@
 package nonlivingThings.relatedCard.cardList.attackCard.normal;
 
-import livingThings.fighter.Enemy;
 import livingThings.fighter.Protagonist;
 import nonlivingThings.relatedCard.Card;
 import nonlivingThings.relatedCard.CardKind;
@@ -13,18 +12,14 @@ public class Anger extends Card {
 		cost = 0;
 		damage = 6;
 		canUseEnemy = true;
+		hasSkill = true;
 		kind = CardKind.ATTACK;
 	}
 	
 	@Override
-	public void attack(Enemy monster, Protagonist player) {
-		if(monster.getHp() - (damage + player.getBuffDamage()) <= 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬
-			monster.setHp(0);
-		}
-		else {
-			monster.setHp(monster.getHp() - (damage + player.getBuffDamage()));
-		}
-		
-		player.useAnger();
+	public void skill(Protagonist player) {
+		player.getTrashCan().addCard(new Anger());
+		player.getTmpCardBag().add(new Anger());
+		player.setTmpCardCount(player.getTmpCardCount() + 1);
 	}
 }

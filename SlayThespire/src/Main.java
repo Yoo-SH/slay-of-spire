@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String args[]) {
 		Route a = new Route();
 		Protagonist player = new Protagonist();
-		TestMonster monster = new TestMonster(); 
+		Skeleton1 monster = new Skeleton1(); 
 		
 		player.getBag().displayCardList();
 		
@@ -24,8 +24,8 @@ public class Main {
 	
 	public static void playerTurn(Protagonist player, Enemy[] monsterList) {
 		//버프 지속시간 1씩 줄임
-		//주인공의 버프가 끝났으면 버프 종료
-		player.decreaseBuffDamage();
+		//주인공의 디버프가 끝났으면 버프 종료
+//		player.decreaseBuffDamage();
 		player.decreaseDeBuffDamage();
 		
 		//플레이어에게 카드 분배
@@ -38,7 +38,7 @@ public class Main {
 		}
 		
 		//에너지3획득
-		player.setEnergy(3);
+		player.addEnergy(3);
 		System.out.println("Energy : " + player.getEnergy());
 		
 		//턴 종료 버튼을 누른 경우 반복문 종료
