@@ -184,5 +184,8 @@ public class MerchantRoom {
 		else {
 			System.out.println("You don't have money enough to buy it.");
 		}
+		
+		//처음은 75골드 그 후엔 계속 25골드씩 증가
+		eliminationPrice += 25;
 	}
 }

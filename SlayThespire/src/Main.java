@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.File;
 
+import route.room.*;
+
 public class Main {
 	public static void main(String args[]) {
 		Route a = new Route();
