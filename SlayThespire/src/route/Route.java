@@ -1,20 +1,22 @@
 package route;
 
-public class Route {
+import java.io.Serializable;
+
+public class Route implements Serializable {
 	final int ROW = 15;
 	final int COL = 7;
 	private RoomKind[][] room = new RoomKind[ROW][COL];
 	private int[] roomCount = new int[ROW];
 	private String[][][] link = new String[ROW - 1][COL][3];		//방과 방 사이의 길 / 각 방마다 가지고 있으며, 최대 3개
-	final int ELITE_COL = 7;		//중간 보스 8층에서 나옴
-	final int BOSS_COL = 14;		//보스는 15층에서 나옴
+	final int ELITE_ROW = 7;		//중간 보스 8층에서 나옴
+	final int BOSS_ROW = 14;		//보스는 15층에서 나옴
 	
 //----------method----------
 	//생성자
 	public Route() {
-		roomCount[ELITE_COL] = 1;
-		roomCount[BOSS_COL] = 1;
-		roomCount[ELITE_COL + 1] = 3;
+		roomCount[ELITE_ROW] = 1;
+		roomCount[BOSS_ROW] = 1;
+		roomCount[ELITE_ROW + 1] = 3;
 		
 		//1층
 		for(int i = 0; i < COL; i++) {
@@ -38,25 +40,25 @@ public class Route {
 		//9층 -> 방이 3개만 존재(방 하나 당 링크를 3으로 해놔서 버그 예방용으로 이렇게 설정)
 		//아래 층에 방이 하나 밖에 없어서 makeRoom 못 씀
 		for(int i = 0; i < COL; i++) {
-			if(countRowRoom(ELITE_COL + 1) == 3) {		//방이 3개라면 for문 탈출
+			if(countRowRoom(ELITE_ROW + 1) == 3) {		//방이 3개라면 for문 탈출
 				break;
 			}
 			
 			int existence = (int) (Math.random()*4);
 			
-			if(existence == 3 && room[ELITE_COL + 1][i] == null)	{		//3일 때 방 생성
-				link[ELITE_COL][3][countRowRoom(ELITE_COL + 1)] = Integer.toString(i);
-				room[ELITE_COL + 1][i] = RoomKind.ENEMY;
+			if(existence == 3 && room[ELITE_ROW + 1][i] == null)	{		//3일 때 방 생성
+				link[ELITE_ROW][3][countRowRoom(ELITE_ROW + 1)] = Integer.toString(i);
+				room[ELITE_ROW + 1][i] = RoomKind.ENEMY;
 			}
 			
-			if(i == 6 && countRowRoom(ELITE_COL + 1) < 3) {		//for문을 다 돌았는데 방의 개수가 3보다 작으면 i를 0으로 바꿈
+			if(i == 6 && countRowRoom(ELITE_ROW + 1) < 3) {		//for문을 다 돌았는데 방의 개수가 3보다 작으면 i를 0으로 바꿈
 				i = 0;
 			}
 		}
 		
 		//2층 ~ 14층 / 8층, 9층은 제외 8층은 중간 보스방, 9층은 1층과 같은 방법으로 생성
-		for(int i = 1; i < BOSS_COL; i++) {
-			if(i == ELITE_COL || i == ELITE_COL + 1) {
+		for(int i = 1; i < BOSS_ROW; i++) {
+			if(i == ELITE_ROW || i == ELITE_ROW + 1) {
 				continue;
 			}
 			
@@ -85,11 +87,11 @@ public class Route {
 			}
 		}
 		
-		linkSpecialRoom(ELITE_COL);
-		linkSpecialRoom(BOSS_COL);
+		linkSpecialRoom(ELITE_ROW);
+		linkSpecialRoom(BOSS_ROW);
 		
-		room[ELITE_COL][3] = RoomKind.ELITE;
-		room[BOSS_COL][3] = RoomKind.BOSS;
+		room[ELITE_ROW][3] = RoomKind.ELITE;
+		room[BOSS_ROW][3] = RoomKind.BOSS;
 		
 		for(int i = 14; i >= 0; i--) {
 			for(int j = 0; j < 7; j++) {
@@ -118,6 +120,10 @@ public class Route {
 			
 			System.out.println("");
 			
+			if(i == ELITE_ROW || i == ELITE_ROW + 1 || i == BOSS_ROW) {
+				System.out.println("");
+				continue;
+			}
 			for(int j = 0; j < 7; j++) {
 				if(i == 0) {
 					break;

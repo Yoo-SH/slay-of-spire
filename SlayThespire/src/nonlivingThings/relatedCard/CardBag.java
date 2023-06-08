@@ -25,9 +25,9 @@ public class CardBag {
 	}
 	
 	//카드 제거 - remove(index)는 index위치의 카드를 지움, remove(object)는 object를 지움
-	public void eliminateCard(int i) {
-		list.remove(i);
-		bag.remove(i);
+	public void eliminateCard(Card card) {
+		list.remove(card);
+		bag.remove(card);
 		listCount--;
 		bagCount--;
 	}

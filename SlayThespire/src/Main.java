@@ -8,6 +8,11 @@ import nonlivingThings.relatedCard.*;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.File;
+
 public class Main {
 	public static void main(String args[]) {
 		Route a = new Route();
@@ -25,7 +30,6 @@ public class Main {
 	public static void playerTurn(Protagonist player, Enemy[] monsterList) {
 		//버프 지속시간 1씩 줄임
 		//주인공의 디버프가 끝났으면 버프 종료
-//		player.decreaseBuffDamage();
 		player.decreaseDeBuffDamage();
 		
 		//플레이어에게 카드 분배
@@ -39,7 +43,6 @@ public class Main {
 		
 		//에너지3획득
 		player.addEnergy(3);
-		System.out.println("Energy : " + player.getEnergy());
 		
 		//턴 종료 버튼을 누른 경우 반복문 종료
 		while(true) {
@@ -95,6 +98,10 @@ public class Main {
 		while(!player.isDie() && !isMonsterAllDie(monsterList)) {
 			//플레이어 턴 호출
 			playerTurn(player, monsterList);
+			//체력을 소모하는 카드로 인해서 자살 가능
+			if(player.isDie()) {
+				
+			}
 			//몬스터 턴 호출
 			for(int i = 0; i < monsterList.length; i++) {
 				if(!monsterList[i].isDie()) {
@@ -111,6 +118,9 @@ public class Main {
 		player.eliminateTmpCard();
 		player.resetBuff();
 		//보상 선택 창
+		//10~20골드 획득 and 카드 선택 -> 카드는 넘기기 버튼이 존재함
+		int deviation = (int) (Math.random() * 11);		//골드 편차치
+		player.setGold(player.getGold() + 10 + deviation);
 	}
 	
 	//몬스터가 전부 죽었는 지 확인
@@ -132,5 +142,41 @@ public class Main {
 		}
 		
 		return false;
+	}
+	
+	//save는 chat gpt 이용하여 구현
+	private void save(Protagonist player, Route route) {
+		String filePath = "./";
+		File saveFile = new File(filePath);
+		
+		if (!saveFile.exists()) {		//saveFile이 존재하는 경우
+		    try {
+		    	//새로운 파일 생성
+		        saveFile.createNewFile();
+		        System.out.println("Save file created successfully!");
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+		}
+		else {		//saveFile이 존재하지 않는 경우
+			try {
+		        FileOutputStream fileOut = new FileOutputStream(saveFile, false);
+				ObjectOutputStream out = new ObjectOutputStream(fileOut);
+		        // Perform operations on the file, such as writing data
+		        // Close the FileOutputStream and other resources when done
+				
+				//player와 route에 관한 정보를 저장
+				out.writeObject(player);
+				out.writeObject(route);
+				
+				//Stream을 닫음 -> 이게 무슨 말인지는 잘 모르겠음
+				out.close();
+				fileOut.close();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+			
+		    System.out.println("Save file already exists!");
+		}
 	}
 }

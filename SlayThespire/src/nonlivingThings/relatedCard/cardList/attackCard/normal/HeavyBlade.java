@@ -17,11 +17,11 @@ public class HeavyBlade extends Card {
 	
 	@Override
 	public void attack(Enemy monster, Protagonist player) {
-		if(monster.getHp() - (damage + (player.getBuffDamage()*3) - player.getDebuffDamage()) < 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬
+		if(monster.getHp() - (damage + (player.getBuffDamage()*3) - player.getDeBuffDamage()) < 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬
 			monster.setHp(0);
 		}
 		else {
-			monster.setHp(monster.getHp() - (damage + (player.getBuffDamage()*3) - player.getDebuffDamage()));
+			monster.setHp(monster.getHp() - (damage + (player.getBuffDamage()*3) - player.getDeBuffDamage()));
 		}
 	}
 }

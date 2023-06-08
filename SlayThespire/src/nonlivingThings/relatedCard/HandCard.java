@@ -6,7 +6,7 @@ import java.util.LinkedList;
 //전투 종료 시 모든 카드들을 가방으로 이동
 //전투 시 턴마다 5장씩 줌 / 단, 쓰지 않은 카드들은 다 쓰레기통으로 이동
 public class HandCard {
-	private  LinkedList<Card> list;		//손에 들 수 있는 카드의 최대 개수는 10장
+	private  LinkedList<Card> list;
 	private  int count;
 	
 	public HandCard() {

@@ -3,6 +3,7 @@ package livingThings.fighter.enemyList;
 import livingThings.fighter.*;
 import nonlivingThings.relatedCard.cardList.Trash;
 
+//중간 보스
 public class DevilSlime extends Enemy {
 	public DevilSlime() {
 		hp = maxHp = 60;

@@ -17,7 +17,7 @@ public class Enemy extends Fighter {
 	
 	//공격 당함
 	public void hit(Protagonist player, Card card) {
-		int damage = card.getDamage() + player.getBuffDamage() - player.getDebuffDamage();
+		int damage = card.getDamage() + player.getBuffDamage() - player.getDeBuffDamage();
 		//취약이 없는 경우
 		if(weakDuration <= 0) {
 			if(hp - damage <= 0) {	//몬스터 체력이 0보다 작거나 같은 경우 체력을 0으로 만듬

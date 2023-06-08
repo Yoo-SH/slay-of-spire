@@ -8,11 +8,12 @@ import nonlivingThings.relatedCard.cardList.attackCard.normal.*;
 import nonlivingThings.relatedCard.cardList.skillCard.normal.*;
 import nonlivingThings.relatedRelics.*;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 //플레이어
-public class Protagonist extends Fighter {
+public class Protagonist extends Fighter implements Serializable {
 	private int buffDamage;		//데미지 증가
 	private LinkedList<Integer> deBuffDamage;	//데미지 감소
 	private LinkedList<Integer> deBuffDamageDuration;
@@ -30,6 +31,8 @@ public class Protagonist extends Fighter {
 	//ex) Anger(분노) 카드는 복사해서 쓰레기통에 넣어 놓음
 	private LinkedList<Card> tmpCardBag;
 	private int tmpCardCount;
+	
+	private int gold;
 	
 	public Protagonist() {
 		hp = maxHp = 80;
@@ -50,6 +53,8 @@ public class Protagonist extends Fighter {
 		
 		tmpCardBag = new LinkedList<Card>();
 		tmpCardCount = 0;
+		
+		gold = 80;
 		
 		//타격 5장, 수비 4장, 강타 1장
 		for(int i = 0; i < 5; i++) {
@@ -195,8 +200,8 @@ public class Protagonist extends Fighter {
 	}
 	
 	//카드 제거
-	public void eliminateCard(int i) {
-		cardBag.eliminateCard(i);
+	public void eliminateCard(Card card) {
+		cardBag.eliminateCard(card);
 	}
 	
 	//임시 카드 제거
@@ -277,13 +282,20 @@ public class Protagonist extends Fighter {
 		return energy;
 	}
 	
+	public int getGold() {
+		return gold;
+	}
+	public void setGold(int gold) {
+		this.gold = gold;
+	}
+	
 	//------------------버프------------------
 	public int getBuffDamage() {
 		return buffDamage;
 	}
 	
 	//------------------디버프------------------
-	public int getDebuffDamage() {
+	public int getDeBuffDamage() {
 		int sum = 0;
 		
 		for(int i = 0; i < deBuffDamageCount; i++) {
