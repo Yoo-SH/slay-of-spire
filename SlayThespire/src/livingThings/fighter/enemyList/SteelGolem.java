@@ -19,6 +19,8 @@ public class SteelGolem extends Enemy {
 			
 		}
 		
+		playSound("/sounds/SteelGolemAttack.wav", 10);
+		
 		player.hit(this);
 	}
 }

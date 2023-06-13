@@ -13,6 +13,9 @@ public class EarthWorm extends  Enemy {
 	public void attack(Protagonist player) {
 		//공격 모션
 		
+		playSound("/sounds/EarthWormAttack.wav", 300);
+
+		
 		//player tmpCardBag에 쓰레기 카드 추가
 		player.getTrashCan().addCard(new Trash());
 		player.getTmpCardBag().add(new Trash());

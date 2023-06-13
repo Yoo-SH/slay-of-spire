@@ -14,6 +14,8 @@ public class DevilSlime extends Enemy {
 	public void attack(Protagonist player) {
 		//휘두르기 모션
 		
+		playSound("/sounds/DevilSlimeAttack.wav", 300);
+		
 		int randomDeBuff = (int) (Math.random()*5);
 		
 		if(randomDeBuff == 0) {		//쓰레기 카드 추가

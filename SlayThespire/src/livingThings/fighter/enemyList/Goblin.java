@@ -26,9 +26,12 @@ public class Goblin extends Enemy {
 		
 		if(motionKind == 0) {		//휘두르기 모션1
 			
+			playSound("/sounds/GoblinAttack1.wav", 300);
+			
 		}
 		else {		//휘두르기 모션2
 			
+			playSound("/sounds/GoblinAttack2.wav", 300);
 		}
 
 		player.hit(this);

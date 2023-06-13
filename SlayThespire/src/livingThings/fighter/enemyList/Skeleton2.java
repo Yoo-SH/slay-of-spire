@@ -12,6 +12,8 @@ public class Skeleton2 extends  Enemy {
 	public void attack(Protagonist player) {
 		//공격 모션
 		
+		playSound("/sounds/Skeleton2Attack.wav", 10);
+		
 		player.hit(this);
 	}
 }

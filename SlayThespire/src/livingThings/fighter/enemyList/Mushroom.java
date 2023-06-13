@@ -27,9 +27,11 @@ public class Mushroom extends Enemy {
 		
 		if(motionKind == 0) {		//때리기 모션
 			
+			playSound("/sounds/MushroomAttack1-1.wav", 300);
 		}
 		else {		//깨물기 모션
 			
+			playSound("/sounds/MushroomAttack1-2.wav", 300);
 		}
 		
 		player.hit(this);
@@ -38,6 +40,8 @@ public class Mushroom extends Enemy {
 	//포자 공격 -> 공격력 2턴간 3감소 -> 확률 높음
 	private void attack2(Protagonist player) {
 		//폭탄 공격 모션
+		
+		playSound("/sounds/MushroomAttack2.wav", 300);
 		
 		//디버프
 		player.setDeBuffDamage(3);

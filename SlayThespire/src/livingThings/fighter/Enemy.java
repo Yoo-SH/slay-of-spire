@@ -1,11 +1,23 @@
 package livingThings.fighter;
 
 import nonlivingThings.relatedCard.*;
+import java.io.File;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 
 //몬스터
 public class Enemy extends Fighter {
 	protected int weakDuration;		//취약 받는 데미지 50% 증가
 	protected int weakeningDuration;	//약화 공격력 25% 감소
+	private File attackSound;
+	private AudioInputStream stream;
+	private AudioFormat format;
+	private DataLine.Info info;
+	private Clip clip;
 	
 	public Enemy() {
 		weakDuration = 0;
@@ -43,6 +55,26 @@ public class Enemy extends Fighter {
 		}
 		if(card.getAdditionWeakening() != 0) {
 			weakeningDuration += card.getAdditionWeakening();
+		}
+	}
+
+	//참고
+	//https://moalgong.tistory.com/22
+	//https://stackoverflow.com/questions/2416935/how-to-play-wav-files-with-java
+	//https://stackoverflow.com/questions/16366669/how-to-give-path-of-the-music-file-that-is-inside-the-java-package
+	public void playSound(String fileName, int sleepTime) {		//sleepTime으로 소리와 타격 타이밍을 맞춤
+		try {
+			stream = AudioSystem.getAudioInputStream(this.getClass().getResource(fileName));
+		    clip = (Clip) AudioSystem.getClip();
+
+			Thread.sleep(sleepTime);
+			
+		    clip.stop();
+			clip.open(stream);
+			clip.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	

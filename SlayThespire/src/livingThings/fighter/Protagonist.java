@@ -1,16 +1,15 @@
 package livingThings.fighter;
 
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Scanner;
+
 import nonlivingThings.relatedCard.Card;
 import nonlivingThings.relatedCard.CardBag;
 import nonlivingThings.relatedCard.CardTrashCan;
 import nonlivingThings.relatedCard.HandCard;
-import nonlivingThings.relatedCard.cardList.attackCard.normal.*;
-import nonlivingThings.relatedCard.cardList.skillCard.normal.*;
-import nonlivingThings.relatedRelics.*;
-
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.Scanner;
+import nonlivingThings.relatedCard.cardList.skillCard.rare.LimitBreak;
+import nonlivingThings.relatedRelics.RelicsBag;
 
 //플레이어
 public class Protagonist extends Fighter implements Serializable {
@@ -57,13 +56,16 @@ public class Protagonist extends Fighter implements Serializable {
 		gold = 80;
 		
 		//타격 5장, 수비 4장, 강타 1장
-		for(int i = 0; i < 5; i++) {
-			gainCard(new Strike());
+//		for(int i = 0; i < 5; i++) {
+//			gainCard(new Strike());
+//		}
+//		for(int i = 0; i < 4; i++) {
+//			gainCard(new Defend());
+//		}
+//		gainCard(new Bash());
+		for(int i = 0; i < 10; i++) {
+			gainCard(new LimitBreak());
 		}
-		for(int i = 0; i < 4; i++) {
-			gainCard(new Defend());
-		}
-		gainCard(new Bash());
 	}
 
 	//죽었는 지 확인

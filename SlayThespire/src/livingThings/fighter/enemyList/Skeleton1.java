@@ -34,12 +34,16 @@ public class Skeleton1 extends Enemy {
 			
 		}
 		
+		playSound("/sounds/Skeleton1Attack1.wav", 10);
+		
 		player.hit(this);
 	}
 	
 	//칼 던지기 공격 -> 공격 시 쓰레기 카드 추가
 	private void attack2(Protagonist player) {
 		//칼 던지기 모션
+		
+		playSound("/sounds/Skeleton1Attack2.wav", 10);
 		
 		//player tmpCardBag에 쓰레기 카드 추가
 		player.getTrashCan().addCard(new Trash());

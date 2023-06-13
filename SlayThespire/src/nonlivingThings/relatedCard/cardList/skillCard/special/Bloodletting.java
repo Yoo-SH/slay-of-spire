@@ -20,5 +20,7 @@ public class Bloodletting extends Card {
 		else {
 			player.setHp(player.getHp() - 3);
 		}
+		
+		playSound("/sounds/Bloodletting.wav", 10);
 	}
 }

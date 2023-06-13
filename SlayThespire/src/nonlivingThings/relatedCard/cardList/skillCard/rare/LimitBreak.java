@@ -14,5 +14,6 @@ public class LimitBreak extends Card {
 	@Override
 	public void skill(Protagonist player) {
 		player.addBuffDamage(player.getBuffDamage());
+		playSound("/sounds/LimitBreak.wav", 10);
 	}
 }

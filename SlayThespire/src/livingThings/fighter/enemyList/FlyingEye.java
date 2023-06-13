@@ -1,6 +1,15 @@
 package livingThings.fighter.enemyList;
 
-import livingThings.fighter.*;
+import java.io.File;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+
+import livingThings.fighter.Enemy;
+import livingThings.fighter.Protagonist;
 
 public class FlyingEye extends Enemy {
 	public FlyingEye() {
@@ -14,6 +23,7 @@ public class FlyingEye extends Enemy {
 		
 		if(attackKind < 3) {		//75%확률로 attack1	
 			attack1(player);
+			System.out.println("FlyingEye Attack!");
 		}
 		else {
 			attack2(player);
@@ -26,9 +36,11 @@ public class FlyingEye extends Enemy {
 		
 		if(motionKind == 0) {		//깨물기 모션
 			
+			playSound("/sounds/FlyingEyeAttack1-1.wav", 200);
 		}
 		else {		//몸통박치기 모션
 			
+			playSound("/sounds/FlyingEyeAttack1-2.wav", 200);
 		}
 		
 		player.hit(this);
@@ -37,6 +49,8 @@ public class FlyingEye extends Enemy {
 	//원거리 공격 -> 공격력 3턴간 5감소
 	private void attack2(Protagonist player) {
 		//원거리 공격 모션
+		
+		playSound("/sounds/FlyingEyeAttack2.wav", 200);
 		
 		//디버프
 		player.setDeBuffDamage(5);

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 public class HandCard {
 	private  LinkedList<Card> list;
 	private  int count;
+	public TestPanel p = new TestPanel();
 	
 	public HandCard() {
 		list = new LinkedList<Card>();
